@@ -525,5 +525,3 @@ docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
 1. 目前使用mysql-server `8.0.28`以上的版本,php版本需要`7.4.7`以上才能连接
 ## License
 MIT
-
-
