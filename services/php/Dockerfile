@@ -1,41 +1,18 @@
-ARG PHP_VERSION
-FROM php:${PHP_VERSION}-fpm
+FROM php:7.4-fpm
 
-ARG TZ
-ARG PHP_EXTENSIONS
-ARG CONTAINER_PACKAGE_URL
-
-
-#RUN if [ ${CONTAINER_PACKAGE_URL} ] ; then sed -i "s/dl-cdn.alpinelinux.org/${CONTAINER_PACKAGE_URL}/g" /etc/apk/repositories ; fi
-
-
-COPY ./extensions /tmp/extensions
-WORKDIR /tmp/extensions
-RUN chmod +x install.sh \
-    && sh install.sh \
-    && rm -rf /tmp/extensions
-
-ADD ./extensions/install-php-extensions  /usr/local/bin/
-
-RUN chmod uga+x /usr/local/bin/install-php-extensions
-
-RUN apk --no-cache add tzdata \
-    && cp "/usr/share/zoneinfo/$TZ" /etc/localtime \
-    && echo "$TZ" > /etc/timezone
-
-
-# Fix: https://github.com/docker-library/php/issues/240
-RUN apk add gnu-libiconv libstdc++ --no-cache --repository http://${CONTAINER_PACKAGE_URL}/alpine/edge/community/ --allow-untrusted
-ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-
-
-# Install composer and change it's cache home
-RUN curl -o /usr/bin/composer https://mirrors.aliyun.com/composer/composer.phar \
-    && chmod +x /usr/bin/composer
-ENV COMPOSER_HOME=/tmp/composer
-
-# php image's www-data user uid & gid are 82, change them to 1000 (primary user)
-RUN apk --no-cache add shadow && usermod -u 1000 www-data && groupmod -g 1000 www-data
-
-
+# 设置时区
+ENV TZ=Asia/Shanghai
+# 安装 Composer
+ENV COMPOSER_HOME /root/composer
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+        && apt-get update && apt-get install -y \
+        --no-install-recommends libfreetype6-dev libjpeg62-turbo-dev libpng-dev curl \
+        && rm -r /var/lib/apt/lists/* \
+        && docker-php-ext-configure gd \
+        && docker-php-ext-install -j$(nproc) gd opcache pdo_mysql gettext sockets \
+        && pecl install redis \
+        && pecl install swoole \
+        && docker-php-ext-enable redis swoole \
+        && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV PATH $COMPOSER_HOME/vendor/bin:$PATH
 WORKDIR /www
