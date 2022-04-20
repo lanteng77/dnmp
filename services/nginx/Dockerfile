@@ -1,20 +1,13 @@
-ARG NGINX_VERSION
-FROM ${NGINX_VERSION}
+FROM centos7.5:base
+LABEL maintainer="zhuruida@yueshang.co"
 
-ARG TZ
-ARG NGINX_VERSION
-ARG CONTAINER_PACKAGE_URL
-ARG NGINX_INSTALL_APPS
+ADD nginx-1.19.7.tar.gz /usr/local/
+RUN groupadd -g 1001 nginx && useradd -g nginx -u 1001 -s /sbin/nologin nginx && cd /usr/local/nginx-1.19.7 && ./configure --prefix=/usr/local/nginx --user=nginx --group=nginx --with-http_ssl_module --with-stream && make && make install && ln -sv /usr/local/nginx/sbin/nginx /usr/bin && rm -rf /usr/local/nginx-1.19.7 && rm -rf /usr/local/nginx-1.19.7.tar.gz
+ADD nginx.conf /usr/local/nginx/conf/nginx.conf
+ADD mycsdn.html /nginx/index.html
 
-ENV INSTALL_APPS=",${NGINX_INSTALL_APPS},"
+RUN chown -R nginx:nginx /usr/local/nginx /nginx
 
-RUN if [ "${CONTAINER_PACKAGE_URL}" != "" ]; then \
-        sed -i "s/dl-cdn.alpinelinux.org/${CONTAINER_PACKAGE_URL}/g" /etc/apk/repositories; \
-    fi
+EXPOSE 80 443
 
-RUN if [ -z "${INSTALL_APPS##*,certbot,*}" ]; then \
-        echo "---------- Install certbot ----------"; \
-        apk add --no-cache certbot; \
-    fi
-
-WORKDIR /www
+CMD ["nginx", "-g", "daemon off;"]
