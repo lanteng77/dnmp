@@ -1,4 +1,5 @@
-FROM centos7.9:base
+FROM scratch
+ADD centos-7-x86_64-docker.tar.xz /
 LABEL maintainer="lanteng77@gmail.com"
 
 ADD nginx-1.19.7.tar.gz /usr/local/
