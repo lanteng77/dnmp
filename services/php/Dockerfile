@@ -17,7 +17,7 @@ RUN chmod +x install.sh \
 
 ADD ./extensions/install-php-extensions  /usr/local/bin/
 
-RUN chmod uga+x /usr/local/bin/install-php-extensions
+RUN chmod uga+x /usr/local/bin/install-php-extensions && /usr/local/bin/install-php-extensions  zip bcmath
 
 RUN apk --no-cache add tzdata \
     && cp "/usr/share/zoneinfo/$TZ" /etc/localtime \
