@@ -17,3 +17,5 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
 ENV PATH $COMPOSER_HOME/vendor/bin:$PATH
 
 WORKDIR /www
+RUN git clone git@gitee.com:ZhongBangKeJi/CRMEB.git \
+    && composer install
