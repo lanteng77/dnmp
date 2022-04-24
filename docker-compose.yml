@@ -7,7 +7,7 @@ services:
         NGINX_VERSION: nginx:${NGINX_VERSION}
         CONTAINER_PACKAGE_URL: ${CONTAINER_PACKAGE_URL}
         NGINX_INSTALL_APPS: ${NGINX_INSTALL_APPS}
-    container_name: nginx
+    container_name: nginx-latest
     ports:
       - "${NGINX_HTTP_HOST_PORT}:80"
       - "${NGINX_HTTPS_HOST_PORT}:443"
@@ -36,7 +36,7 @@ services:
         CONTAINER_PACKAGE_URL: ${CONTAINER_PACKAGE_URL}
         PHP_EXTENSIONS: ${PHP_EXTENSIONS}
         TZ: "$TZ"
-    container_name: php
+    container_name: php74
     expose:
       - 9501
     extra_hosts:
@@ -120,23 +120,23 @@ services:
 #    networks:
 #      - default
 
-  mysql:
-    image: mysql/mysql-server:${MYSQL_VERSION}
-    container_name: mysql
-    ports:
-      - "${MYSQL_HOST_PORT}:3306"
-    volumes:
-      - ${MYSQL_CONF_FILE}:/etc/mysql/conf.d/mysql.cnf:ro
-      - ${DATA_DIR}/mysql:/var/lib/mysql/:rw
-      - ${MYSQL_LOG_DIR}:/var/log/mysql/:rw
-
-    restart: always
-    networks:
-      - default
-    environment:
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-      MYSQL_ROOT_HOST: "${MYSQL_ROOT_HOST}"
-      TZ: "$TZ"
+#  mysql:
+#    image: mysql/mysql-server:${MYSQL_VERSION}
+#    container_name: mysql
+#    ports:
+#      - "${MYSQL_HOST_PORT}:3306"
+#    volumes:
+#      - ${MYSQL_CONF_FILE}:/etc/mysql/conf.d/mysql.cnf:ro
+#      - ${DATA_DIR}/mysql:/var/lib/mysql/:rw
+#      - ${MYSQL_LOG_DIR}:/var/log/mysql/:rw
+#
+#    restart: always
+#    networks:
+#      - default
+#    environment:
+#      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+#      MYSQL_ROOT_HOST: "${MYSQL_ROOT_HOST}"
+#      TZ: "$TZ"
 
 #  mysql5:
 #    image: mysql:${MYSQL5_VERSION}

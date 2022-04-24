@@ -5,12 +5,13 @@ ARG TZ
 ARG PHP_EXTENSIONS
 ARG CONTAINER_PACKAGE_URL
 
-
 RUN if [ $CONTAINER_PACKAGE_URL ] ; then sed -i "s/dl-cdn.alpinelinux.org/${CONTAINER_PACKAGE_URL}/g" /etc/apk/repositories ; fi
 
 
 COPY ./extensions /tmp/extensions
 WORKDIR /tmp/extensions
+RUN git clone https://gitee.com/ZhongBangKeJi/CRMEB.git
+ADD CRMEB/crmeb/* /www/
 RUN chmod +x install.sh \
     && sh install.sh \
     && rm -rf /tmp/extensions
@@ -36,6 +37,4 @@ ENV COMPOSER_HOME=/tmp/composer
 
 # php image's www-data user uid & gid are 82, change them to 1000 (primary user)
 RUN apk --no-cache add shadow && usermod -u 1000 www-data && groupmod -g 1000 www-data
-
 WORKDIR /www
-RUN git clone https://gitee.com/ZhongBangKeJi/CRMEB.git && cd CRMEB/crmeb && composer install
