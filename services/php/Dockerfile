@@ -10,8 +10,7 @@ RUN if [ $CONTAINER_PACKAGE_URL ] ; then sed -i "s/dl-cdn.alpinelinux.org/${CONT
 
 COPY ./extensions /tmp/extensions
 WORKDIR /tmp/extensions
-RUN git clone https://gitee.com/ZhongBangKeJi/CRMEB.git
-ADD CRMEB/crmeb/* /www/
+
 RUN chmod +x install.sh \
     && sh install.sh \
     && rm -rf /tmp/extensions
