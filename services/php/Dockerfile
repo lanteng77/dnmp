@@ -17,11 +17,13 @@ RUN chmod +x install.sh \
 
 ADD ./extensions/install-php-extensions  /usr/local/bin/
 
-RUN chmod uga+x /usr/local/bin/install-php-extensions && /usr/local/bin/install-php-extensions  zip bcmath
+ADD https://business.swoole.com/static/loader2.2.0/swoole_loader74.so /usr/local/lib/php/extensions/no-debug-non-zts-20190902
 
-RUN apk --no-cache add tzdata \
+RUN chmod uga+x /usr/local/bin/install-php-extensions && /usr/local/bin/install-php-extensions  zip bcmath \    && apk --no-cache add tzdata \
     && cp "/usr/share/zoneinfo/$TZ" /etc/localtime \
-    && echo "$TZ" > /etc/timezone
+    && echo "$TZ" > /etc/timezone \
+    && sed -i "$a extension=swoole_loader74.so" `php -i | grep php.ini |  awk -F "=>" '{print $2}' |grep php.ini` \
+           && rm -r swoole
 
 
 # Fix: https://github.com/docker-library/php/issues/240
