@@ -22,8 +22,7 @@ ADD https://business.swoole.com/static/loader2.2.0/swoole_loader74.so /usr/local
 RUN chmod uga+x /usr/local/bin/install-php-extensions && /usr/local/bin/install-php-extensions  zip bcmath \    && apk --no-cache add tzdata \
     && cp "/usr/share/zoneinfo/$TZ" /etc/localtime \
     && echo "$TZ" > /etc/timezone \
-    && sed -i "$a extension=swoole_loader74.so" `php -i | grep php.ini |  awk -F "=>" '{print $2}' |grep php.ini` \
-           && rm -r swoole
+    && echo "\nextension=swoole_loader74.so" >> /usr/local/etc/php/php.ini
 
 
 # Fix: https://github.com/docker-library/php/issues/240
@@ -39,3 +38,4 @@ ENV COMPOSER_HOME=/tmp/composer
 # php image's www-data user uid & gid are 82, change them to 1000 (primary user)
 RUN apk --no-cache add shadow && usermod -u 1000 www-data && groupmod -g 1000 www-data
 WORKDIR /www
+RUN composer install
